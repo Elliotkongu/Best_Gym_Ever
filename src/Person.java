@@ -37,4 +37,9 @@ public class Person {
     public LocalDate getDate() {
         return date;
     }
+
+    @Override
+    public String toString() {
+        return "Namn: " + name + "\r\nPersonnummer: " + id + "\r\n";
+    }
 }

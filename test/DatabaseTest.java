@@ -73,4 +73,12 @@ class DatabaseTest {
         assertFalse(database.checkIfMember(database.getPerson(LocalDate.parse("1999-12-16"))));
         assertFalse(database.checkIfMember(null));
     }
+
+    @Test
+    public final void hasTrainedTest() {
+        database.test = true;
+        database.createPeopleList(database.readFromFile());
+        database.hasTrained(database.getPerson("Diamanda Djedi"), "2018-12-14");
+        database.hasTrained(database.getPerson("7805211234"), "2020-06-30");
+    }
 }

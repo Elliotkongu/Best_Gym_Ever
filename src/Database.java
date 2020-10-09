@@ -1,8 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -16,7 +15,22 @@ import java.util.Scanner;
 public class Database {
     protected boolean test = false;
     protected Scanner scanner;
-    List<Person> people = new ArrayList<>();
+    private final List<Person> people = new ArrayList<>();
+
+    public void createPeopleList(List<String> file) {
+        LocalDate date;
+        String id;
+        String name;
+        for (int i = 0; i < file.size(); i++) {
+            int indexOfComma = file.get(i).indexOf(',');
+            if (file.get(i).contains(",")) {
+                name = file.get(i).substring(indexOfComma + 2);
+                id = file.get(i).substring(0, indexOfComma);
+                date = LocalDate.parse(file.get(i + 1));
+                people.add(new Person(name, id, date));
+            }
+        }
+    }
 
     public List<String> readFromFile() {
         List<String> readFile = new ArrayList<>();
@@ -53,24 +67,9 @@ public class Database {
         }
     }
 
-    public void createPeopleList(List<String> file) {
-        LocalDate date;
-        String id;
-        String name;
-        for (int i = 0; i < file.size(); i++) {
-            int indexOfComma = file.get(i).indexOf(',');
-            if (file.get(i).contains(",")) {
-                name = file.get(i).substring(indexOfComma + 2);
-                id = file.get(i).substring(0, indexOfComma);
-                date = LocalDate.parse(file.get(i + 1));
-                people.add(new Person(name, id, date));
-            }
-        }
-    }
-
     public Person getPerson(String nameOrId) {
         for (Person person : people) {
-            if (person.getName().equals(nameOrId) || person.getId().equals(nameOrId)) {
+            if (person.getName().equalsIgnoreCase(nameOrId) || person.getId().equals(nameOrId)) {
                 return person;
             }
         }
@@ -101,12 +100,25 @@ public class Database {
         }
     }
 
+    public void hasTrained(Person person, String optionalTestDate) {
+        LocalDate date;
+        if(test) {
+            date = LocalDate.parse(optionalTestDate);
+        } else {
+            date = LocalDate.now();
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("logbook.txt", true))) {
+            bw.append(person.toString()).append("Tränade: ").append(String.valueOf(date)).append("\r\n\r\n");
+        } catch (IOException e) {
+            System.out.println("Kan inte skriva till filen");
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+    }
+
     public void mainProgram() {
         createPeopleList(readFromFile());
-//        for (Person person : people) {
-//            System.out.println("Namn: " + person.getName() + "\nID: " + person.getId() + "\nSenast betalat årsavgift: " + person.getDate() +
-//                    "\nÄr nuvarande medlem: " + person.checkIfMember() + "\n");
-//        }
+
         String s = readInput("Skriv in personnummer eller namn för den person du söker efter", null);
         Person person = getPerson(s);
         if (person == null) {
@@ -116,7 +128,8 @@ public class Database {
         if (!person.checkIfMember()) {
             System.out.println("Den personen är en förre detta medlem");
         } else {
-            System.out.println("Medlemens namnm: " + person.getName() + "\nPersonnummer: " + person.getId());
+            System.out.println("Personen är en nuvarande medlem");
+            hasTrained(person, null);
         }
     }
 
