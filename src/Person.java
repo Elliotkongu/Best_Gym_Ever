@@ -18,6 +18,8 @@ public class Person {
         this.date = date;
     }
 
+    //For testing purposes
+    //Används i huvudprogrammets "checkIfMember" metod för tester.
     public boolean checkIfMember(LocalDate today) {
         return today.isBefore(date.plusYears(1));
     }

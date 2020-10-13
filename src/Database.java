@@ -17,6 +17,10 @@ public class Database {
     protected Scanner scanner;
     private final List<Person> people = new ArrayList<>();
 
+    /**
+     * Skapar en lista av alla personer från inskickad fil.
+     * @param file filen som blir avläst.
+     */
     public void createPeopleList(List<String> file) {
         LocalDate date;
         String id;
@@ -32,6 +36,10 @@ public class Database {
         }
     }
 
+    /**
+     * Läser av filen customers.txt och returnerar en lista av alla rader.
+     * @return En lista med alla rader.
+     */
     public List<String> readFromFile() {
         List<String> readFile = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader("customers.txt"))) {
@@ -48,6 +56,12 @@ public class Database {
         }
     }
 
+    /**
+     * Läser indatan som användaren skriver in och returnerar den som en sträng.
+     * @param prompt Prompten för vad man ska skriva för något.
+     * @param testParameter Testparameter för tester som byter ut användaren. Är null i huvudprogrammet.
+     * @return Indatan som en sträng
+     */
     public String readInput(String prompt, String testParameter) {
 
         if (test) {
@@ -67,6 +81,11 @@ public class Database {
         }
     }
 
+    /**
+     * Tar in namn eller personnummer och returnerar personen som letas efter.
+     * @param nameOrId Namnet eller personnummret av personen som letas efter.
+     * @return Personen som letas efter.
+     */
     public Person getPerson(String nameOrId) {
         for (Person person : people) {
             if (person.getName().equalsIgnoreCase(nameOrId) || person.getId().equals(nameOrId)) {
@@ -76,6 +95,12 @@ public class Database {
         return null;
     }
 
+    /**
+     * Tar in datumet för senaster gången personen betalade sin årsavgift
+     * och returnerar personen som letas efter om dehittas.
+     * @param date Datumet för senaste gången personen betalade sin årsavgift.
+     * @return Personen som letas efter.
+     */
     public Person getPerson(LocalDate date) {
         for (Person person : people) {
             if (person.getDate().equals(date)) {
@@ -86,6 +111,8 @@ public class Database {
     }
 
     // For testing purposes
+    //Kollar om personen är en medlem, används bara för tester då koden själv använder Person-klassens inbyggda
+    //metod för att kolla medlemskap.
     protected boolean checkIfMember(Person person) {
         LocalDate date;
         if (test) {
@@ -100,6 +127,11 @@ public class Database {
         }
     }
 
+    /**
+     * Skriver i en loggbok(textfil) om en person tränat, använder bara medlemmar.
+     * @param person Medlemmen som tränar
+     * @param optionalTestDate Datum för test som byter nuvarande datum. Är null i huvudprogrammet.
+     */
     public void hasTrained(Person person, String optionalTestDate) {
         LocalDate date;
         if(test) {
@@ -116,6 +148,11 @@ public class Database {
         }
     }
 
+    /**
+     * Skapar listan av personer utifrån filen customers.txt och läser sedan indata från användaren.
+     * Letar därefter om personen finns i listan och skriver ut om dem inte är medlem eller är en före detta medlem.
+     * Om personen är en medlem så skriv att de tränat.
+     */
     public void mainProgram() {
         createPeopleList(readFromFile());
 
